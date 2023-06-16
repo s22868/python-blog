@@ -1,3 +1,15 @@
-<h1>Hello world</h1>
-{{name}}
-<p>hello</p>
+<h1>Hello {{email or ""}}</h1>
+{%if not email%}
+<a href="/login">Zaloguj</a>
+{%else%}
+<a href="/logout">Wyloguj</a>
+{%endif%}
+{%for post in posts %}
+<div>
+  <h2>{{post.title}}</h2>
+  <h3>{{post.subtitle}}</h3>
+  <sup>{{post.author}}</sup>
+</div>
+<img src="{{post.photo}}" alt="" />
+<p>{{post.text}}</p>
+{%endfor%}
