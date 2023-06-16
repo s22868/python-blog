@@ -1,6 +1,7 @@
 from flask import Flask, render_template, session, redirect, flash, request
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, CreatePostForm
 from db import db
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 
@@ -29,6 +30,7 @@ def login():
 
     return render_template("login.html", form=form)
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterForm()
@@ -43,8 +45,9 @@ def register():
             db.users.insert_one({"email": email, "password": password})
             flash("Użytkownik został zarejestrowany!")
             return redirect("/login")
-        
+
     return render_template("register.html", form=form)
+
 
 @app.route("/logout")
 def logout():
@@ -57,13 +60,93 @@ def forgot_password():
     return render_template("forgot-password.html")
 
 
+@app.route("/account")
+def account():
+    return render_template("account.html")
+
+
+@app.route("/post/<post_id>")
+def post(post_id):
+    try:
+        id = ObjectId(post_id)
+    except:
+        return redirect("/")
+
+    post = db.posts.find_one({"_id": id})
+    return render_template("post.html", post=post)
+
+
+@app.route("/create-post", methods=["GET", "POST"])
+def create_post():
+    form = CreatePostForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            title = form.title.data
+            subtitle = form.subtitle.data
+            photo = form.photo.data
+            text = form.text.data
+            author = session.get("email")
+            db.posts.insert_one(
+                {
+                    "title": title,
+                    "text": text,
+                    "subtitle": subtitle,
+                    "author": author,
+                    "photo": photo,
+                }
+            )
+            return redirect("/account")
+    return render_template("create-post.html", form=form)
+
+
+@app.route("/edit-post/<post_id>", methods=["GET", "POST"])
+def edit_post(post_id):
+    try:
+        id = ObjectId(post_id)
+    except:
+        return redirect("/account")
+    form = CreatePostForm()
+    post = db.posts.find_one({"_id": id})
+    if request.method == "POST" and session.get("email") == post.get("author"):
+        if form.validate_on_submit():
+            title = form.title.data
+            subtitle = form.subtitle.data
+            photo = form.photo.data
+            text = form.text.data
+            db.posts.update_one(
+                {"_id": id},
+                {
+                    "$set": {
+                        "title": title,
+                        "text": text,
+                        "subtitle": subtitle,
+                        "photo": photo,
+                    }
+                },
+            )
+        return redirect("/account")
+    elif session.get("email") != post.get("author"):
+        return redirect("/")
+    return render_template("edit-post.html", post=post, form=form)
+
+
+@app.route("/delete-post/<post_id>")
+def delete_post(post_id):
+    try:
+        id = ObjectId(post_id)
+    except:
+        return redirect("/account")
+    user = db.users.find_one({"email": session.get("email")})
+    db.posts.delete_one({"_id": id, "author": user.get("email")})
+    return redirect("/account")
+
+
 # API
 @app.route("/api/posts", methods=["GET", "POST"])
 def api_posts():
-    limit = request.args.get("limit", 20)
-    offset = request.args.get("offset", 0)
-
     if request.method == "GET":
+        limit = request.args.get("limit", 20)
+        offset = request.args.get("offset", 0)
         posts = db.posts.find({}, {"_id": False}).limit(int(limit)).skip(int(offset))
         return list(posts)
     elif request.method == "POST":
