@@ -1,7 +1,7 @@
-<h1>Hello <a href="{{ url_for('account') }}">{{email or ""}}</a></h1>
 {%if not email%}
 <a href="/login">Zaloguj</a>
 {%else%}
+<h1>Cześć <a href="{{ url_for('account') }}">{{email or ""}}</a></h1>
 <a href="/logout">Wyloguj</a>
 {%endif%}
 {%for post in posts %}

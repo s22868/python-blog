@@ -2,6 +2,7 @@ from flask import Flask, render_template, session, redirect, flash, request
 from forms import LoginForm, RegisterForm, CreatePostForm, EditPostForm
 from db import db
 from bson.objectid import ObjectId
+from login_required import login_required
 
 app = Flask(__name__)
 
@@ -61,6 +62,7 @@ def forgot_password():
 
 
 @app.route("/account")
+@login_required
 def account():
     posts = db.posts.find({"author": session.get("email")})
 
@@ -79,6 +81,7 @@ def post(post_id):
 
 
 @app.route("/create-post", methods=["GET", "POST"])
+@login_required
 def create_post():
     form = CreatePostForm()
     if request.method == "POST":
@@ -102,6 +105,7 @@ def create_post():
 
 
 @app.route("/edit-post/<post_id>", methods=["GET", "POST"])
+@login_required
 def edit_post(post_id):
     try:
         id = ObjectId(post_id)
@@ -140,6 +144,7 @@ def edit_post(post_id):
 
 
 @app.route("/delete-post/<post_id>")
+@login_required
 def delete_post(post_id):
     try:
         id = ObjectId(post_id)
