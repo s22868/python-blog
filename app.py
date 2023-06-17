@@ -62,7 +62,9 @@ def forgot_password():
 
 @app.route("/account")
 def account():
-    return render_template("account.html")
+    posts = db.posts.find({"author": session.get("email")})
+
+    return render_template("account.html", posts=posts)
 
 
 @app.route("/post/<post_id>")

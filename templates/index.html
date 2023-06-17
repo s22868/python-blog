@@ -1,4 +1,4 @@
-<h1>Hello {{email or ""}}</h1>
+<h1>Hello <a href="{{ url_for('account') }}">{{email or ""}}</a></h1>
 {%if not email%}
 <a href="/login">Zaloguj</a>
 {%else%}
