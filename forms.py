@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, EmailField
-from wtforms.widgets import TextArea
+from wtforms import StringField, PasswordField, SubmitField, EmailField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
@@ -22,5 +21,12 @@ class CreatePostForm(FlaskForm):
     title = StringField("Tytuł", validators=[DataRequired(), Length(min=2)])
     subtitle = StringField("Podtytuł", validators=[DataRequired(), Length(min=2)])
     photo = StringField("Miniaturka", validators=[DataRequired(), Length(min=2)])
-    text = StringField("Treść", validators=[DataRequired(), Length(min=10)], widget=TextArea())
+    text = TextAreaField("Treść", validators=[DataRequired(), Length(min=10)])
     submit = SubmitField("Dodaj post")
+
+class EditPostForm(FlaskForm):
+    title = StringField("Tytuł", validators=[DataRequired(), Length(min=2)])
+    subtitle = StringField("Podtytuł", validators=[DataRequired(), Length(min=2)])
+    photo = StringField("Miniaturka", validators=[DataRequired(), Length(min=2)])
+    text = TextAreaField("Treść", validators=[DataRequired(), Length(min=10)])
+    submit = SubmitField("Edytuj post")

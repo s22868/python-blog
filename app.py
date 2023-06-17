@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, redirect, flash, request
-from forms import LoginForm, RegisterForm, CreatePostForm
+from forms import LoginForm, RegisterForm, CreatePostForm, EditPostForm
 from db import db
 from bson.objectid import ObjectId
 
@@ -105,8 +105,15 @@ def edit_post(post_id):
         id = ObjectId(post_id)
     except:
         return redirect("/account")
-    form = CreatePostForm()
+    form = EditPostForm()
     post = db.posts.find_one({"_id": id})
+
+    if request.method == "GET":
+        form.title.data = post.get("title")
+        form.subtitle.data = post.get("subtitle")
+        form.photo.data = post.get("photo")
+        form.text.data = post.get("text")
+
     if request.method == "POST" and session.get("email") == post.get("author"):
         if form.validate_on_submit():
             title = form.title.data
