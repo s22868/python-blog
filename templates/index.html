@@ -11,5 +11,5 @@
   <sup>{{post.author}}</sup>
 </div>
 <img src="{{post.photo}}" alt="" />
-<a href="/post/{{post._id}}">Czytaj dalej</a>
+<a href="{{ url_for('post', post_id=post._id) }}">Czytaj dalej</a>
 {%endfor%}
