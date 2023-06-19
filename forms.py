@@ -17,6 +17,17 @@ class RegisterForm(FlaskForm):
     )
     submit = SubmitField("Zarejestruj się")
 
+class ForgotPasswordForm(FlaskForm):
+    email = EmailField("Email", validators=[DataRequired(), Email(), Length(min=2)])
+    submit = SubmitField("Zresetuj hasło")
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField("Hasło", validators=[DataRequired()])
+    password2 = PasswordField(
+        "Powtórz hasło", validators=[DataRequired(), EqualTo("password")]
+    )
+    submit = SubmitField("Zmień hasło")
+
 class CreatePostForm(FlaskForm):
     title = StringField("Tytuł", validators=[DataRequired(), Length(min=2)])
     subtitle = StringField("Podtytuł", validators=[DataRequired(), Length(min=2)])

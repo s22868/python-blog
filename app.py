@@ -1,12 +1,41 @@
 from flask import Flask, render_template, session, redirect, flash, request
-from forms import LoginForm, RegisterForm, CreatePostForm, EditPostForm
-from db import db
+from forms import (
+    LoginForm,
+    RegisterForm,
+    CreatePostForm,
+    EditPostForm,
+    ForgotPasswordForm,
+    ResetPasswordForm,
+)
 from bson.objectid import ObjectId
+import os
+from dotenv import load_dotenv
+from db import db
 from login_required import login_required
+from flask_mail import Mail, Message
+
+load_dotenv()
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "super secret key for school project"
+
+# mail config
+
+app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
+app.config["MAIL_PORT"] = 465
+app.config["MAIL_USE_TLS"] = False
+app.config["MAIL_USE_SSL"] = True
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+
+mail = Mail(app)
+
+
+def send_email(mailTo, title, body):
+    msg = Message(title, sender=app.config.get("MAIL_USERNAME"), recipients=[mailTo])
+    msg.body = body
+    mail.send(msg)
 
 
 @app.route("/")
@@ -45,20 +74,61 @@ def register():
         else:
             db.users.insert_one({"email": email, "password": password})
             flash("Użytkownik został zarejestrowany!")
+            send_email(email, "Rejestracja", "Witaj na naszej stronie!")
             return redirect("/login")
 
     return render_template("register.html", form=form)
+
+
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if session.get("email"):
+        return redirect("/")
+
+    form = ForgotPasswordForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            email = request.form.get("email")
+            user = db.users.find_one({"email": email})
+            if user:
+                send_email(
+                    email,
+                    "Reset hasła",
+                    "Kliknij w link, aby zresetować hasło: http://localhost:5000/reset-password/"
+                    + str(user.get("_id")),
+                )
+                flash("Wysłano email z linkiem do resetowania hasła!")
+            else:
+                flash("Wysłano email z linkiem do resetowania hasła!")
+    return render_template("forgot-password.html", form=form)
+
+
+@app.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    try:
+        id = ObjectId(token)
+    except:
+        return redirect("/")
+
+    user = db.users.find_one({"_id": id})
+    if not user:
+        return redirect("/")
+
+    form = ResetPasswordForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            password = request.form.get("password")
+            db.users.update_one({"_id": id}, {"$set": {"password": password}})
+            flash("Hasło zostało zresetowane!")
+            return redirect("/login")
+
+    return render_template("reset-password.html", form=form)
 
 
 @app.route("/logout")
 def logout():
     session.pop("email", None)
     return redirect("/")
-
-
-@app.route("/forgot-password")
-def forgot_password():
-    return render_template("forgot-password.html")
 
 
 @app.route("/account")
