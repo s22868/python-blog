@@ -1,15 +1,21 @@
-{%if not email%}
-<a href="/login">Zaloguj</a>
-{%else%}
-<h1>Cześć <a href="{{ url_for('account') }}">{{email or ""}}</a></h1>
-<a href="/logout">Wyloguj</a>
-{%endif%}
-{%for post in posts %}
-<div>
-  <h2>{{post.title}}</h2>
-  <h3>{{post.subtitle}}</h3>
-  <sup>{{post.author}}</sup>
-</div>
-<img src="{{post.photo}}" alt="" />
-<a href="{{ url_for('post', post_id=post._id) }}">Czytaj dalej</a>
-{%endfor%}
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="row">
+    {% for post in posts %}
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h2>{{ post.title }}</h2>
+            <h3>{{ post.subtitle }}</h3>
+            <sup>{{ post.author }}</sup>
+          </div>
+          <img src="{{ post.photo }}" alt="" class="card-img-top img-fluid">
+          <div class="card-body">
+            <a href="{{ url_for('post', post_id=post._id) }}" class="btn btn-primary">Czytaj dalej</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

@@ -1,7 +1,15 @@
-<div>
-  <h2>{{post.title}}</h2>
-  <h3>{{post.subtitle}}</h3>
-  <sup>{{post.author}}</sup>
-  <img src="{{post.photo}}" alt="" />
-  <p>{{post.text}}</p>
-</div>
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="post">
+            <div class="post-details">
+                <h2>{{ post.title }}</h2>
+                <h3>{{ post.subtitle }}</h3>
+                <sup>{{ post.author }}</sup>
+            </div>
+            <img class="post-image" src="{{ post.photo }}" alt="" />
+            <p>{{ post.text }}</p>
+        </div>
+    </div>
+{% endblock %}

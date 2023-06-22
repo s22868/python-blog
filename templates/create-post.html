@@ -1,13 +1,21 @@
-<form method="post" style="display: flex; flex-direction: column;">
-    {{ form.hidden_tag() }}
-    {{ form.title.label }}
-    {{ form.title }}
-    {{ form.subtitle.label }}
-    {{ form.subtitle }}
-    {{ form.photo.label }}
-    {{ form.photo }}
-    {{ form.text.label }}
-    {{ form.text }}
-    {{ form.submit }}
-</form>
+{% extends "base.html" %}
 
+{% block content %}
+    <h1>Dodaj post</h1>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        {{ form.title.label }}
+        {{ form.title }}
+        {{ form.subtitle.label }}
+        {{ form.subtitle }}
+        {{ form.photo.label }}
+        {{ form.photo(placeholder="Adres URL miniaturki obrazka") }}
+        {{ form.text.label }}
+        {{ form.text }}
+        {{ form.submit }}
+    </form>
+    <a href="{{ url_for('account') }}">Powrót do panelu użytkownika</a>
+    {% for message in get_flashed_messages() %}
+        {{ message }}
+    {% endfor %}
+{% endblock %}

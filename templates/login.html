@@ -1,13 +1,31 @@
+{% extends 'base.html' %}
 
-<form method="post">
-    {{ form.hidden_tag() }}
-    {{ form.email.label }}
-    {{ form.email }}
-    {{ form.password.label }}
-    {{ form.password }}
-    {{ form.submit }}
-</form>
-<a href="{{ url_for('forgot_password') }}">Zapomniałeś hasła?</a>
-{%for message in get_flashed_messages() %}
-{{message}}
-{%endfor%}
+{% block content %}
+    <div class="container">
+        <h2>Dodaj post</h2>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.subtitle.label(class="form-label") }}
+                {{ form.subtitle(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.photo.label(class="form-label") }}
+                {{ form.photo(class="form-control", placeholder="Adres URL miniaturki obrazka") }}
+            </div>
+            <div class="form-group">
+                {{ form.text.label(class="form-label") }}
+                {{ form.text(class="form-control") }}
+            </div>
+            <button type="submit" class="btn btn-primary">Dodaj post</button>
+        </form>
+        <a href="{{ url_for('account') }}">Powrót do panelu użytkownika</a>
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-info mt-3">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endblock %}
