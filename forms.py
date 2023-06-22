@@ -40,4 +40,4 @@ class EditPostForm(FlaskForm):
     subtitle = StringField("Podtytuł", validators=[DataRequired(), Length(min=2)])
     photo = StringField("Miniaturka", validators=[DataRequired(), Length(min=2)])
     text = TextAreaField("Treść", validators=[DataRequired(), Length(min=10)])
-    submit = SubmitField("Edytuj post")
+    submit = SubmitField("Zapisz zmiany")

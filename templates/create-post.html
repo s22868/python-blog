@@ -21,7 +21,7 @@
                 {{ form.text.label(class="form-label") }}
                 {{ form.text(class="form-control") }}
             </div>
-            <button type="submit" class="btn btn-primary">Dodaj post</button>
+            <button type="submit" class="btn btn-primary btn-block">Dodaj post</button>
         </form>
         <a href="{{ url_for('account') }}">Powrót do panelu użytkownika</a>
         {% for message in get_flashed_messages() %}

@@ -1,12 +1,31 @@
-<form method="post" style="display: flex; flex-direction: column;">
-    {{ form.hidden_tag() }}
-    {{ form.title.label }}
-    {{ form.title }}
-    {{ form.subtitle.label }}
-    {{ form.subtitle }}
-    {{ form.photo.label }}
-    {{ form.photo }}
-    {{ form.text.label }}
-    {{ form.text }}
-    {{ form.submit }}
-</form>
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h2>Edytuj post</h2>
+        <form method="post" style="display: flex; flex-direction: column;">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.subtitle.label(class="form-label") }}
+                {{ form.subtitle(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.photo.label(class="form-label") }}
+                {{ form.photo(class="form-control", placeholder="Adres URL miniaturki obrazka") }}
+            </div>
+            <div class="form-group">
+                {{ form.text.label(class="form-label") }}
+                {{ form.text(class="form-control") }}
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+        <a href="{{ url_for('account') }}">Powrót do panelu użytkownika</a>
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-info mt-3">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endblock %}
