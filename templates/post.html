@@ -9,7 +9,7 @@
                 <sup>{{ post.author }}</sup>
             </div>
             <img class="post-image" src="{{ post.photo }}" alt="" />
-            <p>{{ post.text }}</p>
+            <p>{{ post.text | safe }}</p>
         </div>
     </div>
 {% endblock %}
