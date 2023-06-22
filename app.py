@@ -231,12 +231,37 @@ def api_posts():
     if request.method == "GET":
         limit = request.args.get("limit", 20)
         offset = request.args.get("offset", 0)
-        posts = db.posts.find({}, {"_id": False}).limit(int(limit)).skip(int(offset))
+        author = request.args.get("author", "")
+        if author == "":
+            posts = (
+                db.posts.find({}, {"_id": False}).limit(int(limit)).skip(int(offset))
+            )
+            return list(posts)
+        posts = (
+            db.posts.find({"author": author}, {"_id": False})
+            .limit(int(limit))
+            .skip(int(offset))
+        )
         return list(posts)
     elif request.method == "POST":
         data = request.get_json()
         db.posts.insert_one(data)
         return "OK"
+
+
+@app.route("/api/posts/<post_id>", methods=["GET"])
+def api_post(post_id):
+    try:
+        id = ObjectId(post_id)
+    except:
+        return "Invalid id", 400
+
+    post = db.posts.find_one({"_id": id}, {"_id": False})
+    if not post:
+        return "Not found", 404
+
+    if request.method == "GET":
+        return post
 
 
 @app.errorhandler(404)
