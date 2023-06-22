@@ -32,7 +32,7 @@
   <nav class="navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand" href="/">Blog</a>
     <ul class="navbar-nav ml-auto">
-      {% if not email %}
+      {% if not session['email'] %}
         <li class="nav-item">
           <a class="nav-link" href="/login">Zaloguj</a>
         </li>
@@ -41,7 +41,7 @@
         </li>
       {% else %}
         <li class="nav-item">
-          <span class="navbar-text">Cześć <a href="{{ url_for('account') }}">{{ email or "" }}</a></span>
+          <span class="navbar-text">Cześć <a href="{{ url_for('account') }}">{{ session['email'] or "" }}</a></span>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/logout">Wyloguj</a>
